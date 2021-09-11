@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <signal.h>
+#include <sys/wait.h>
 #define K 5
 
 int main(void)
@@ -23,15 +24,22 @@ int main(void)
         int r = random() % 3;
         printf("%d\t%d\n", r, getpid());
         //0
-        // if (r == 0) // huerfano
-        // {
-        //     pid_t parent_pid = getppid();
-        //     kill(parent_pid, 9);
-        // }
-        if (r == 1) // zombie
+        if (r == 0) // huerfano
+        {
+            pid_t parent_pid = getppid(); // obtiene la pid del proceso padre
+            kill(parent_pid, 9);          // mata al padre
+            printf("");
+            sleep(5);
+        }
+        else if (r == 1) // zombie
         {
             pid_t parent_pid = getppid();
             kill(parent_pid, SIGSTOP);
+            exit(0);
+        }
+        else // <--muere
+        {
+            sleep(5);
             exit(0);
         }
     }
@@ -39,6 +47,7 @@ int main(void)
     {
         while (1)
         {
+            wait(NULL);
         }
     }
 
